@@ -1,0 +1,20 @@
+public static class TaskExecutor
+    {
+        private static readonly BlockingCollection<BackgroundTask> tasks = new BlockingCollection<BackgroundTask>();
+
+        public static void ExcuteLater(BackgroundTask task)
+        {
+            tasks.Add(task);
+        }
+
+        public static void StartExecuting()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                foreach (BackgroundTask backgroundTask in tasks.GetConsumingEnumerable())
+                {
+                    backgroundTask.Run();
+                }
+            });
+        }
+    }
